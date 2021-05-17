@@ -5,7 +5,7 @@ const GITHASH = process.env.GITHASH || "0000000";
 const VERSION = require("../../package.json").version || "0.0.0";
 const env = process.env.NODE_ENV || "development";
 const debug = env !== "production";
-const port = process.env.PORT ? parseInt(process.env.PORT, 10) : env === "production" ? 5000 : 5555;
+const port = process.env.PORT ? parseInt(process.env.PORT, 10) : env === "production" ? 5000 : 7777;
 const host = process.env.HOST || `0.0.0.0`;
 const REDIS_MAX_TTL: number = process.env.REDIS_MAXTTL
   ? parseInt(process.env.REDIS_MAXTTL, 10)
@@ -17,7 +17,7 @@ const redis = {
   prefix: process.env.REDIS_PREFIX || "walletconnect-bridge",
 };
 const mode = (process.env.RELAY_MODE || "any") as RelayModes.All;
-const iridiumUrl = process.env.IRIDIUM_URL || `ws://127.0.0.1:7777`;
+const wakuUrl = process.env.WAKU_URL || `http://127.0.0.1:8546`;
 
 export default {
   env,
@@ -26,7 +26,7 @@ export default {
   host,
   redis,
   mode,
-  iridiumUrl,
+  wakuUrl,
   REDIS_MAX_TTL,
   GITHASH,
   VERSION,

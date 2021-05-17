@@ -18,6 +18,68 @@ export class RedisService {
     this.initialize();
   }
 
+  public setMessage(params: RelayJsonRpc.PublishParams): Promise<void> {
+    return new Promise((resolve, reject) => {
+      const { topic, message, ttl } = params;
+      this.logger.debug(`Setting Message`);
+      this.logger.trace({ type: "method", method: "setMessage", params });
+      const key = `message:${topic}`;
+      const hash = sha256(message);
+      const val = `${hash}:${message}`;
+      this.client.sadd(key, val, (err: Error) => {
+        if (err) reject(err);
+        this.client.expire(key, ttl, (err: Error) => {
+          if (err) reject(err);
+          resolve();
+        });
+      });
+    });
+  }
+
+  public async getMessage(topic: string, hash: string): Promise<string> {
+    this.logger.debug(`Getting Message`);
+    this.logger.trace({ type: "method", method: "getMessage", topic });
+    return new Promise((resolve, reject) => {
+      this.sscan(`message:${topic}`, "MATCH", `${hash}:*`)
+        .then((result: string[]) => {
+          resolve(result[0]?.split(":")[1]);
+        })
+        .catch(reject);
+    });
+  }
+
+  public getMessages(topic: string): Promise<string[]> {
+    return new Promise((resolve, reject) => {
+      this.logger.debug(`Getting Message`);
+      this.logger.trace({ type: "method", method: "getMessage", topic });
+      this.client.smembers(`message:${topic}`, (err: Error, res: string[]) => {
+        if (err) reject(err);
+        const messages: string[] = [];
+        res.map((m: string) => {
+          if (m != null) messages.push(m.split(":")[1]);
+        });
+        resolve(messages);
+      });
+    });
+  }
+
+  public deleteMessage(topic: string, hash: string): Promise<void> {
+    return new Promise((resolve, reject) => {
+      this.logger.debug(`Deleting Message`);
+      this.logger.trace({ type: "method", method: "deleteMessage", topic });
+      this.sscan(`message:${topic}`, "MATCH", `${hash}:*`)
+        .then((res: string[]) => {
+          if (res.length) {
+            this.client.srem(`message:${topic}`, res[0], (err: Error) => {
+              if (err) reject(err);
+              resolve();
+            });
+          }
+        })
+        .catch(reject);
+    });
+  }
+
   public setLegacyCached(message: LegacySocketMessage): Promise<void> {
     return new Promise((resolve, reject) => {
       this.logger.debug(`Setting Legacy Cached`);

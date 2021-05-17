@@ -37,13 +37,12 @@ import {
 
 import { SubscriptionService } from "./subscription";
 import { WebSocketService } from "./ws";
+import { WakuService } from "./waku";
 import { HttpService } from "./http";
-import { IridiumService } from "./iridium";
 
 export class JsonRpcService {
   public subscription: SubscriptionService;
-  public iridium: IridiumService;
-
+  public waku: WakuService;
   public context = "jsonrpc";
 
   private timeout = new Map<number, { counter: number; timeout: NodeJS.Timeout }>();
@@ -61,7 +60,12 @@ export class JsonRpcService {
     this.ws = ws;
     this.notification = notification;
     this.subscription = new SubscriptionService(this.server, this.logger, this.ws);
-    this.iridium = new IridiumService(this.server, this.logger, config.iridiumUrl);
+    this.waku = new WakuService(
+      this.server,
+      this.logger,
+      config.wakuUrl,
+      this.subscription.subscriptions,
+    );
     this.initialize();
   }
 
