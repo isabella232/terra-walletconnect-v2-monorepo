@@ -23,10 +23,10 @@ services:
     volumes:
       - letsencrypt:/etc/letsencrypt
 
-  redis:
-    image: 'redis:6-alpine'
-    volumes:
-      - redis:/data
+  # redis:
+  #   image: 'redis:6-alpine'
+  #   volumes:
+  #     - redis:/data
 
   # This naming of the docker containers completely defeats the
   # purpose of Docker swarm and docker load balancing
@@ -36,4 +36,4 @@ services:
     image: ${RELAY_IMAGE}
     environment:
       NODE_ENV: development
-      REDIS_URL: redis://redis:6379/0
+      REDIS_URL: ${REDIS_URL:-redis://redis:6379/0}

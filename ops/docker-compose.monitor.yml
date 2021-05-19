@@ -29,7 +29,7 @@ services:
   redis_exporter:
     image: oliver006/redis_exporter
     command:
-      - '--redis.addr=redis://redis:6379'
+      - '--redis.addr=${REDIS_URL:-redis://redis:6379}'
 
   node_exporter:
      image: quay.io/prometheus/node-exporter

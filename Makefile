@@ -3,7 +3,7 @@ BRANCH=$(shell git rev-parse --abbrev-ref HEAD)
 GITHASH=$(shell git rev-parse --short HEAD)
 REMOTE=$(shell git remote show origin -n | grep Push | cut -f6 -d' ')
 REMOTE_HASH=$(shell git ls-remote $(REMOTE) $(BRANCH) | head -n1 | cut -f1)
-project=walletconnect
+project=terra_walletconnect
 redisImage='redis:6-alpine'
 standAloneRedis='xredis'
 nginxImage='$(project)/nginx:$(BRANCH)'
@@ -29,6 +29,8 @@ pull: ## downloads docker images
 config: ## configures domain and certbot email
 	@read -p 'Relay URL domain: ' relay; \
 	echo "RELAY_URL="$$relay > config
+	@read -p 'Redis URL domain: ' redis; \
+	echo "REDIS_URL="$$redis > config
 	@read -p 'Email for SSL certificate (default noreply@gmail.com): ' email; \
 	echo "CERTBOT_EMAIL="$$email >> config
 	@read -p 'Is your DNS configured with cloudflare proxy? [y/N]: ' cf; \

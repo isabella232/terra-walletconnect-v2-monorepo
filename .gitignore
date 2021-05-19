@@ -30,3 +30,6 @@ zip
 .nyc_output
 tsconfig.tsbuildinfo
 test.db
+
+servers/relay/.envrc
+config

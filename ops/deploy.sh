@@ -3,6 +3,7 @@
 monitoring=${MONITORING:-false} # this makes a bash string, not a boolean
 
 export RELAY_URL=$(grep RELAY_URL config | cut -f2 -d=)
+export REDIS_URL=$(grep REDIS_URL config | cut -f2 -d=)
 export CERTBOT_EMAIL=$(grep CERTBOT_EMAIL config | cut -f2 -d=)
 export CLOUDFLARE=$(grep CLOUDFLARE config | cut -f2 -d=)
 
