@@ -1,4 +1,4 @@
-FROM node:14-slim
+FROM node:lts-alpine
 COPY ./package.json /tmp
 COPY ./package-lock.json /tmp
 RUN npm ci --prefix /tmp
@@ -10,4 +10,6 @@ COPY . .
 RUN npm run build
 
 USER node
-CMD node /relay/dist
+#CMD lerna /relay/dist
+ENTRYPOINT ["npm", "run"]
+CMD ["start"]
