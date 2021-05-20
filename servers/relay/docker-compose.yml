@@ -16,9 +16,13 @@ services:
     build:
       dockerfile: Dockerfile
       context: .
+    ports:
+      - target: ${PORT:-5555}
+        published: ${PORT:-5555}
+        mode: host
     environment:
       - GITHASH=00001
-      - HOST=${HOST:-localhost}
+      - HOST=${HOST:-0.0.0.0}
       - PORT=${PORT:-5555}
       - NODE_ENV=${NODE_ENV:-development}
       - REDIS_URL=${REDIS_URL:-redis://redis:6379/0}

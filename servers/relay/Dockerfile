@@ -10,6 +10,4 @@ COPY . .
 RUN npm run build
 
 USER node
-#CMD lerna /relay/dist
-ENTRYPOINT ["npm", "run"]
-CMD ["start"]
+CMD node /relay/dist
