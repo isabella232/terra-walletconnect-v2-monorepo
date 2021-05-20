@@ -31,5 +31,6 @@ zip
 tsconfig.tsbuildinfo
 test.db
 
+servers/relay/.env
 servers/relay/.envrc
 config
