@@ -20,7 +20,7 @@ Relay server for connecting Terra mobile station to Dapps
 
 ### Variables
 
-The configuration is provided through the following environment variables at runtime:
+The configuration is provided through the following environment variables at runtime
 
 | Name | Required | Default | Description |
 | ---- | -------- | ------- | ----------- |
