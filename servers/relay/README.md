@@ -9,6 +9,7 @@ Terra Android Mobile Station - https://play.google.com/store/apps/details?id=mon
 ## Prerequisits
 
 - Node >= v10.24
+- NPM
 
 
 ## Configuration
@@ -25,6 +26,7 @@ The configuration is provided through the following environment variables at run
 | `REDIS_URL` | yes  | `redis://localhost:6379/0` | Redis URL (redis://host[:port]][/db]) |
 | `REDIS_PREFIX` | no  | `terra-wc-relay` | Redis key prefix  |
 | `REDIS_MAX_TTL` | no  | `604800` | Redis record expire second (default 7 days) |
+
 
 ### File
 
@@ -46,6 +48,12 @@ GITHASH=00001
 
 ### Build
 
+Install dependencies:
+
+```
+npm install
+```
+
 Build:
 
 ```
@@ -54,13 +62,15 @@ npm run build
 
 ### Run
 
-Run tests:
+Run locally:
 
 ```
 npm run start
 ```
 
-Dockerization:
+## Dockerization
+
+Deploy with docker-compose:
 
 ```
 docker-comopose up
