@@ -12,8 +12,8 @@ Relay server for connecting Terra mobile station to Dapps
 
 ## Prerequisits
 
-- Node >= v10.24
-- NPM
+- Node LTS
+- NPM LTS
 
 
 ## Configuration
