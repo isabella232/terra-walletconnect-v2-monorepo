@@ -34,8 +34,7 @@ The configuration is provided through the following environment variables at run
 
 ### Environment file
 
-You can set default values for any environment variables referenced in the Docker-compose, in an environment file named `.env`
-
+In an environment file named `.env`, It is possible to set default values for any environment variables with Docker-compose
 ```
 HOST=0.0.0.0 #0.0.0.0 instead of 127.0.0.1, localhost
 PORT=8080
