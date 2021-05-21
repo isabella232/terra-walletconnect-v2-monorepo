@@ -22,7 +22,6 @@ dist
 build
 .DS_Store
 .makeFlags*
-.env
 *.nix
 zip
 .idea
@@ -31,6 +30,4 @@ zip
 tsconfig.tsbuildinfo
 test.db
 
-servers/relay/.env
-servers/relay/.envrc
 config
