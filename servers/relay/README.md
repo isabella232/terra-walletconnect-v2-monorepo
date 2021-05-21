@@ -108,7 +108,7 @@ Relay get metrics URL:
 > response process, http, websocket.. metrics,  If Ok
 
 
-Key indicators can be obtained from metrics.
+Key indicators can be obtained through a combination of metrics.
 
 | Name | Descriptions | Related metrics |
 | --------------- | --------------------- | ---------------- |
