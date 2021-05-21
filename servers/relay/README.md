@@ -3,7 +3,7 @@
 
 Open relay server for connecting Terra mobile station to Dapps 
 
-Terra Android Mobile Station - https://play.google.com/store/apps/details?id=money.terra.station&hl=ko&gl=US
+Android Mobile Station - https://play.google.com/store/apps/details?id=money.terra.station&hl=ko&gl=US
 
 
 ## Prerequisits
@@ -28,9 +28,9 @@ The configuration is provided through the following environment variables at run
 | `REDIS_MAX_TTL` | no  | `604800` | Redis record expire second (default 7 days) |
 
 
-### File
+### Environment file
 
-.env file:
+You can set default values for any environment variables referenced in the Docker-compose, in an environment file named .env
 
 ```
 HOST=0.0.0.0 #0.0.0.0 instead of 127.0.0.1, localhost
@@ -54,7 +54,7 @@ Install dependencies:
 npm install
 ```
 
-Build:
+Builds the relay system local npm:
 
 ```
 npm run build
@@ -62,7 +62,7 @@ npm run build
 
 ### Run
 
-Run locally:
+Run relay on watch mode and shows logs:
 
 ```
 npm run start
@@ -70,7 +70,7 @@ npm run start
 
 ## Dockerization
 
-Deploy with docker-compose:
+Deploy production with Docker-compose:
 
 ```
 docker-comopose up
