@@ -37,8 +37,8 @@ The configuration is provided through the following environment variables at run
 In an environment file named `.env`, It is easy to set default values for environment variables with Docker-compose
 ```
 HOST=0.0.0.0 #0.0.0.0 instead of 127.0.0.1, localhost
-PORT=5000
-NODE_ENV=production
+PORT=5555
+NODE_ENV=development
 
 REDIS_URL=redis://redis:6379
 REDIS_PREFIX=terra-wc-relay
