@@ -3,11 +3,11 @@
 
 Relay server for connecting Terra mobile station to Dapps 
 
-Android Mobile Station - https://play.google.com/store/apps/details?id=money.terra.station&hl=ko&gl=US
-iOs Mobile Station - https://apps.apple.com/app/id1548434735
-Terra Bridge - https://bridge.terra.money/
-Mirror - https://terra.mirror.finance/
-Anchor - https://app.anchorprotocol.com/earn
+- Android Mobile Station - https://play.google.com/store/apps/details?id=money.terra.station&hl=ko&gl=US
+- iOs Mobile Station - https://apps.apple.com/app/id1548434735
+- Terra Bridge - https://bridge.terra.money/
+- Mirror - https://terra.mirror.finance/
+- Anchor - https://app.anchorprotocol.com/earn
 
 
 ## Prerequisits
