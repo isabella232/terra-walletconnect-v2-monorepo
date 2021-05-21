@@ -24,12 +24,13 @@ The configuration is provided through the following environment variables at run
 
 | Name | Required | Default | Description |
 | ---- | -------- | ------- | ----------- |
-| `HOST` | yes | `0.0.0.0` | Service domain | 
-| `PORT` | yes | `5555` | Service port |
-| `NODE_ENV` | yes  | `development` | Node environment(development/production) |
-| `REDIS_URL` | yes  | `redis://localhost:6379/0` | Redis URL (redis://host[:port]][/db]) |
+| `HOST` | no | `0.0.0.0` | Service domain | 
+| `PORT` | no | `5555` | Service port |
+| `NODE_ENV` | no  | `development` | Node environment(development/production) |
+| `REDIS_URL` | no  | `redis://localhost:6379/0` | Redis URL (redis://host[:port]][/db]) |
 | `REDIS_PREFIX` | no  | `terra-wc-relay` | Redis key prefix  |
 | `REDIS_MAX_TTL` | no  | `604800` | Redis record expire second (default 7 days) |
+| `GITHASH` | no  | `0000000` | Service sub-identifier |
 
 
 ### Environment file
