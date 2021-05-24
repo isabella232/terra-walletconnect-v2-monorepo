@@ -79,3 +79,43 @@ Deploy production with Docker-compose:
 ```
 docker-comopose up
 ```
+
+## End points
+
+### WebSocket connect
+
+WebSocket Provider URL:
+
+> **ws://{Service url}**
+> 
+> response 101 If OK
+
+### Health check
+
+Relay Provider URL:
+
+> **http://{Service url}/health**
+> 
+> response 200 If OK
+
+
+### Metrics collect
+
+Relay get metrics URL:
+
+> **https://{Service url}/metrics**
+> 
+> response process, http, websocket.. metrics,  If Ok
+
+
+Key indicators can be obtained through a combination of metrics.
+
+| Name | Descriptions | Related metrics |
+| --------------- | --------------------- | ---------------- |
+| `Messages` | Amount of web socket messages per minute | websocket_messages_total | 
+| `Active WS connections` | Amount of open web socket connections | process_open_fds, websocket_new_connections |
+| `Node event loop Lag seconds` | Heatmap of Node Event Loop Lag Seconds | nodejs_eventloop_lag_seconds |
+| `Connections` | Rate of New/Closed connections per minute | websocket_new_connections (custom),  websocket_closed_connections (custom) |
+| `Ratio closed/new connections` | Division of websocket closed connections and New connections per 5 minutes | websocket_closed_connections (custom), websocket_new_connections (custom)  |
+| `Event loop lag mean seconds` | Nodejs default prometheus eventloop lag mean seconds | nodejs_eventloop_lag_mean_seconds |
+| `CPU seconds` | Rate of System/User CPU process seconds per minute | process_cpu_seconds_total, process_cpu_system_seconds_total, process_cpu_user_seconds_total |
