@@ -32,7 +32,7 @@ export class HttpService {
     this.app.register(helmet);
 
     this.app.get("/health", (_, res) => {
-      res.status(204).send();
+      res.status(200).send();
     });
 
     this.app.get("/hello", (_, res) => {
