@@ -12,8 +12,8 @@ import { Notification, LegacySocketMessage } from "./types";
 
 export class RedisService {
   public client: any = redis.createClient(config.redis);
-  public sub: any = redis.createClient();
-  public pub: any = redis.createClient();
+  public sub: any = redis.createClient(config.redis);
+  public pub: any = redis.createClient(config.redis);
   
   public context = "redis";
 
