@@ -12,7 +12,7 @@ import { SOCKET_EVENTS } from "./constants/ws";
 
 export class SubscriptionService {
   public subscriptions: Subscription[] = [];
-
+  
   public context = "subscription";
 
   constructor(
@@ -33,28 +33,43 @@ export class SubscriptionService {
     this.logger.debug(`Setting Subscription`);
     this.logger.trace({ type: "method", method: "set", topic: subscription.topic });
     this.subscriptions.push({ ...subscription, id });
+    this.redis.setBroadcastChannel(subscription.topic);
     return id;
   }
 
-  public get(topic: string, senderSocketId: string): Subscription[] {
-    const subscriptions = this.subscriptions.filter(
-      sub => sub.topic === topic && sub.socketId !== senderSocketId,
-    );
+  public get(topic: string, senderSocketId?: string): Subscription[] {
+    const subscriptions = senderSocketId ? 
+      this.subscriptions.filter(sub => sub.topic === topic 
+        && sub.socketId !== senderSocketId) : 
+      this.subscriptions.filter(sub => sub.topic === topic) ;
+    
     this.logger.debug(`Getting Subscriptions`);
     this.logger.trace({ type: "method", method: "get", topic, subscriptions });
     return subscriptions;
   }
 
+  public getAll(): Subscription[]{
+    return this.subscriptions;
+  }
+
   public remove(id: string): void {
     this.logger.debug(`Removing Subscription`);
     this.logger.trace({ type: "method", method: "remove", id });
-    this.subscriptions = this.subscriptions.filter(sub => sub.id !== id);
+    const deletings = this.subscriptions.filter(sub => sub.id === id);
+    if (deletings) {
+      deletings.forEach((deleting) => this.redis.setBroadcastChannel(deleting.topic));
+      this.subscriptions = this.subscriptions.filter(sub => sub.id !== id);
+    }
   }
 
   public removeSocket(socketId: string): void {
     this.logger.debug(`Removing Socket Subscriptions`);
     this.logger.trace({ type: "method", method: "removeSocket", socketId });
-    this.subscriptions = this.subscriptions.filter(sub => sub.socketId !== socketId);
+    const deletings = this.subscriptions.filter(sub => sub.socketId !== socketId);
+    if (deletings) {
+      deletings.forEach((deleting) => this.redis.setBroadcastChannel(deleting.topic));
+      this.subscriptions = this.subscriptions.filter(sub => sub.socketId !== socketId);
+    }
   }
 
   // ---------- Private ----------------------------------------------- //

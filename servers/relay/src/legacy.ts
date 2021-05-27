@@ -13,7 +13,7 @@ export class LegacyService {
   public subscription: SubscriptionService;
 
   public context = "legacy";
-
+  
   constructor(
     public server: HttpService,
     public logger: Logger,
@@ -55,6 +55,7 @@ export class LegacyService {
 
   private initialize(): void {
     this.logger.trace(`Initialized`);
+    this.redis.setBroadcastReceiver(this.onBroadcastRequest.bind(this));
   }
 
   private async onPublishRequest(socketId: string, message: LegacySocketMessage) {
@@ -66,22 +67,40 @@ export class LegacyService {
     }
 
     await this.searchSubscriptions(socketId, message);
+    
   }
 
   private async onSubscribeRequest(socketId: string, message: LegacySocketMessage) {
     const topic = message.topic;
     this.logger.debug(`Subscribe Request Received`);
     this.logger.trace({ type: "method", method: "onSubscribeRequest", socketId, message });
-    const subscriber = { topic, socketId };
 
+    const subscriber = { topic, socketId };
     this.subscription.set(subscriber);
 
     await this.pushCachedMessages(socketId, topic);
   }
 
+  private async onBroadcastRequest(topic: string, message: string) {
+    this.logger.debug(`Delayed Pushing Cached Messages topic: ${topic} `);
+    this.logger.debug(`Subscribe Request Received`);
+
+    const subscriptions = this.subscription.get(topic);
+    this.logger.debug(`Found ${subscriptions.length} subscriptions`);
+    this.logger.trace({ type: "method", method: "searchSubscriptions", subscriptions });
+    if (subscriptions.length) {
+      await Promise.all(
+        subscriptions.map((subscriber: Subscription) =>
+          this.pushCachedMessages(subscriber.socketId, topic),
+        ),
+      );
+    }
+  }
+
   private async searchSubscriptions(socketId: string, message: LegacySocketMessage) {
     this.logger.debug(`Searching subscriptions`);
     this.logger.trace({ type: "method", method: "searchSubscriptions", socketId, message });
+    
     const subscriptions = this.subscription.get(message.topic, socketId);
     this.logger.debug(`Found ${subscriptions.length} subscriptions`);
     this.logger.trace({ type: "method", method: "searchSubscriptions", subscriptions });
@@ -93,12 +112,14 @@ export class LegacyService {
       );
     } else {
       await this.redis.setLegacyCached(message);
+      await this.redis.broadcast(message.topic, JSON.stringify(message));
     }
   }
 
   private async pushCachedMessages(socketId: string, topic: string) {
     this.logger.debug(`Pushing Cached Messages`);
     this.logger.trace({ type: "method", method: "pushCachedMessages", socketId, topic });
+
     const messages = await this.redis.getLegacyCached(topic);
     this.logger.debug(`Found ${messages.length} cached messages`);
     this.logger.trace({ type: "method", method: "pushCachedMessages", messages });
@@ -106,7 +127,7 @@ export class LegacyService {
       await Promise.all(
         messages.map((message: LegacySocketMessage) => this.pushSubscription(socketId, message)),
       );
-    }
+    } 
   }
 
   private async pushSubscription(socketId: string, message: LegacySocketMessage): Promise<void> {

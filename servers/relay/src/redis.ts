@@ -12,7 +12,9 @@ import { Notification, LegacySocketMessage } from "./types";
 
 export class RedisService {
   public client: any = redis.createClient(config.redis);
-
+  public sub: any = redis.createClient();
+  public pub: any = redis.createClient();
+  
   public context = "redis";
 
   constructor(public logger: Logger) {
@@ -168,6 +170,18 @@ export class RedisService {
         resolve();
       });
     });
+  }
+
+  public broadcast(topic: string, message: string) {
+    this.pub.publish(topic, message);
+  }
+
+  public setBroadcastChannel(topic: string) {
+    this.sub.subscribe(topic);
+  }
+
+  public setBroadcastReceiver(receiver: any) {
+    this.sub.on("message", receiver);
   }
 
   // ---------- Private ----------------------------------------------- //

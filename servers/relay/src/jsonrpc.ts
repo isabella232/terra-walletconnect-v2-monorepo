@@ -179,6 +179,7 @@ export class JsonRpcService {
     const { socketId } = subscription;
     this.logger.debug(`Pushing Cached Messages`);
     this.logger.trace({ type: "method", method: "pushCachedMessages", socketId });
+
     const messages = await this.redis.getMessages(subscription.topic);
     this.logger.debug(`Found ${messages.length} cached messages`);
     this.logger.trace({ type: "method", method: "pushCachedMessages", messages });
@@ -188,6 +189,8 @@ export class JsonRpcService {
           this.pushSubscription(subscription, message);
         }),
       );
+    } else {
+      await this.redis.setBroadcastChannel(subscription.topic);
     }
   }
 

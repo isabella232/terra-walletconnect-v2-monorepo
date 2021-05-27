@@ -4,7 +4,7 @@ import { use, expect } from "chai";
 import chaiHttp from "chai-http";
 import { Agent } from "https";
 
-import { TEST_RELAY_URL, TEST_TOPIC } from "./shared";
+import { TEST_RELAY_URL, TEST_TOPIC } from "../test/shared";
 
 use(chaiHttp);
 
@@ -26,7 +26,7 @@ describe("HTTP", () => {
   });
   it("GET health", async () => {
     const response = await api.get("/health");
-    expect(response.status).to.equal(204);
+    expect(response.status).to.equal(200);
   });
   it("GET hello", async () => {
     const response = await api.get("/hello");

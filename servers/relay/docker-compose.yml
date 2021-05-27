@@ -7,10 +7,10 @@ volumes:
   redis:
 
 services:
-  redis:
-    image: 'redis:6-alpine'
-    volumes:
-      - redis:/data
+  # redis:
+  #   image: 'redis:6-alpine'
+  #   volumes:
+  #     - redis:/data
 
   relay:
     build:
