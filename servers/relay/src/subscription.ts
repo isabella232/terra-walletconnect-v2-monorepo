@@ -57,7 +57,7 @@ export class SubscriptionService {
     this.logger.trace({ type: "method", method: "remove", id });
     const deletings = this.subscriptions.filter(sub => sub.id === id);
     if (deletings) {
-      deletings.forEach((deleting) => this.redis.setBroadcastChannel(deleting.topic));
+      deletings.forEach((deleting) => this.redis.deleteBroadcastChannel(deleting.topic));
       this.subscriptions = this.subscriptions.filter(sub => sub.id !== id);
     }
   }
@@ -67,7 +67,7 @@ export class SubscriptionService {
     this.logger.trace({ type: "method", method: "removeSocket", socketId });
     const deletings = this.subscriptions.filter(sub => sub.socketId !== socketId);
     if (deletings) {
-      deletings.forEach((deleting) => this.redis.setBroadcastChannel(deleting.topic));
+      deletings.forEach((deleting) => this.redis.deleteBroadcastChannel(deleting.topic));
       this.subscriptions = this.subscriptions.filter(sub => sub.socketId !== socketId);
     }
   }

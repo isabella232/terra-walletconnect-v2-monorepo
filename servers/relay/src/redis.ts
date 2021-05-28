@@ -180,6 +180,10 @@ export class RedisService {
     this.sub.subscribe(topic);
   }
 
+  public deleteBroadcastChannel(topic: string) {
+    this.sub.unsubscribe(topic);
+  }
+
   public setBroadcastReceiver(receiver: any) {
     this.sub.on("message", receiver);
   }
