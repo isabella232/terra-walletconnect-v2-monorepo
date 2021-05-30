@@ -27,6 +27,7 @@ The configuration is provided through the following environment variables at run
 | `HOST` | no | `0.0.0.0` | Service domain | 
 | `PORT` | no | `5555` | Service port |
 | `NODE_ENV` | no  | `development` | Node environment(development/production) |
+| `LOG_LEVEL` | no  | `debug` | Console log level(trace/debug/info/warn/error) |
 | `REDIS_URL` | no  | `redis://localhost:6379/0` | Redis URL (redis://host[:port]][/db]) |
 | `REDIS_PREFIX` | no  | `terra-wc-relay` | Redis key prefix  |
 | `REDIS_MAX_TTL` | no  | `604800` | Redis record expire second (default 7 days) |
