@@ -41,6 +41,7 @@ In an environment file named `.env`, It is easy to set default values for enviro
 HOST=0.0.0.0 #0.0.0.0 instead of 127.0.0.1, localhost
 PORT=5555
 NODE_ENV=development
+LOG_LEVEL=debug
 
 REDIS_URL=redis://redis:6379
 REDIS_PREFIX=terra-wc-relay
