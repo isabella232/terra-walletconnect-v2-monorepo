@@ -39,14 +39,15 @@ class LoggerImpl implements Logger {
   public trace(message: any): void {
     if (this.logLevel !== "trace") return;
     const decorated = (typeof message === 'string') ? chalk.gray(message) : message
-    this.tag ? this._trace(`${this.tag} (trace)`, decorated) : 
-      this._trace(`(trace)`, decorated);
+    this.tag ? this._trace(`${this.tag}`, decorated) : 
+      this._trace(decorated);
   }
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   private _trace(...args: any[]): void {
     console.log(
-      `[${formatToTimeZone(new Date(), "YYYY-MM-DD HH:mm:ss.SSS", { timeZone: "Asia/Seoul" })}]`,
+      '[TRACE]',
+      `${formatToTimeZone(new Date(), "YYYY-MM-DD HH:mm:ss.SSS", { timeZone: "Asia/Seoul" })}`,
       ...args,
     );
   }
@@ -54,29 +55,31 @@ class LoggerImpl implements Logger {
   public debug(message: any): void {
     if (this.logLevel !== "trace" && this.logLevel !== "debug") return;
     const decorated = (typeof message === 'string') ? chalk.green(message) : message
-    this.tag ? this._debug(`${this.tag} (debug)`, decorated) : 
-      this._debug("(debug)", decorated);
+    this.tag ? this._debug(`${this.tag}`, decorated) : 
+      this._debug(decorated);
   }
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   private _debug(...args: any[]): void {
     console.debug(
-      `[${formatToTimeZone(new Date(), "YYYY-MM-DD HH:mm:ss.SSS", { timeZone: "Asia/Seoul" })}]`,
+      '[DEBUG]',
+      `${formatToTimeZone(new Date(), "YYYY-MM-DD HH:mm:ss.SSS", { timeZone: "Asia/Seoul" })}`,
       ...args,
     );
   }
 
   public info(message: any): void {
     if (this.logLevel === "warn" || this.logLevel === "error") return;
-    const decorated = (typeof message === 'string') ? chalk.blue(message) : message
-    this.tag ? this._info(`${this.tag} (info)`, decorated) : 
-      this._info("(info)", decorated);
+    const decorated = (typeof message === 'string') ? chalk.cyan(message) : message
+    this.tag ? this._info(`${this.tag}`, decorated) : 
+      this._info(decorated);
   }
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   private _info(...args: any[]): void {
     console.info(
-      `[${formatToTimeZone(new Date(), "YYYY-MM-DD HH:mm:ss.SSS", { timeZone: "Asia/Seoul" })}]`,
+      '[INFO] ',
+      `${formatToTimeZone(new Date(), "YYYY-MM-DD HH:mm:ss.SSS", { timeZone: "Asia/Seoul" })}`,
       ...args,
     );
   }
@@ -84,28 +87,30 @@ class LoggerImpl implements Logger {
   public warn(message: any): void {
     if (this.logLevel === "error") return;
     const decorated = (typeof message === 'string') ? chalk.orange(message) : message
-    this.tag ? this._warn(`${this.tag} (warn)`, decorated) : 
-      this._warn("(warn)", decorated);
+    this.tag ? this._warn(`${this.tag}`, decorated) : 
+      this._warn(decorated);
   }
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   private _warn(...args: any[]): void {
     console.warn(
-      `[${formatToTimeZone(new Date(), "YYYY-MM-DD HH:mm:ss.SSS", { timeZone: "Asia/Seoul" })}]`,
+      '[WARN] ',
+      `${formatToTimeZone(new Date(), "YYYY-MM-DD HH:mm:ss.SSS", { timeZone: "Asia/Seoul" })}`,
       ...args,
     );
   }
 
   public error(message: any): void {
     const decorated = (typeof message === 'string') ? chalk.bold.red(message) : message
-    this.tag ? this._error(`${this.tag} (error)`, decorated) : 
-      this._error("(error)", decorated);
+    this.tag ? this._error(`${this.tag}`, decorated) : 
+      this._error(decorated);
   }
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   private _error(...args: any[]): void {
     console.error(
-      `[${formatToTimeZone(new Date(), "YYYY-MM-DD HH:mm:ss.SSS", { timeZone: "Asia/Seoul" })}]`,
+      '[ERROR]',
+      `${formatToTimeZone(new Date(), "YYYY-MM-DD HH:mm:ss.SSS", { timeZone: "Asia/Seoul" })}`,
       ...args,
     );
   }
