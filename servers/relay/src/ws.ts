@@ -1,9 +1,8 @@
 import client from "prom-client";
 import { EventEmitter } from "events";
-import { Logger } from "pino";
+import { Logger, generateChildLogger } from "./lib/logger";
 import { safeJsonParse } from "safe-json-utils";
 import { isJsonRpcPayload } from "@json-rpc-tools/utils";
-import { generateChildLogger } from "@pedrouid/pino-utils";
 
 import config from "./config";
 import register from "./metrics";
@@ -121,7 +120,7 @@ export class WebSocketService {
     const socketId = generateRandomBytes32();
     this.metrics.newConnection.inc();
     this.logger.info(`New Socket Connected`);
-    this.logger.debug({ type: "event", event: "connection", socketId });
+    this.logger.trace({ type: "event", event: "connection", socketId });    
     this.sockets.set(socketId, socket);
     this.events.emit(SOCKET_EVENTS.open, socketId);
     socket.on("message", async data => {
@@ -160,7 +159,6 @@ export class WebSocketService {
         this.logger.fatal(e);
         throw e;
       }
-      this.logger.error({ "Socket Error": e.message });
     });
 
     socket.on("close", () => {

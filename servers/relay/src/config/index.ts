@@ -5,6 +5,7 @@ const GITHASH = process.env.GITHASH || "0000000";
 const VERSION = require("../../package.json").version || "0.0.0";
 const env = process.env.NODE_ENV || "development";
 const debug = env !== "production";
+const logLevel = process.env.LOG_LEVEL ? process.env.LOG_LEVEL : (debug ? "debug" : "warn");
 // TODO: Relay Server Port needs to be set from ops
 const port = process.env.PORT ? parseInt(process.env.PORT, 10) : env === "production" ? 5000 : 5555;
 const host = process.env.HOST || `0.0.0.0`;
@@ -20,6 +21,7 @@ const mode = (process.env.RELAY_MODE || "any") as RelayModes.All;
 export default {
   env,
   debug,
+  logLevel,
   port,
   host,
   redis,

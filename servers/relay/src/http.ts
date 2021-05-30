@@ -2,8 +2,7 @@ import { EventEmitter } from "events";
 import fastify, { FastifyInstance } from "fastify";
 import helmet from "fastify-helmet";
 import ws from "fastify-websocket";
-import pino, { Logger } from "pino";
-import { getDefaultLoggerOptions, generateChildLogger } from "@pedrouid/pino-utils";
+import { Logger, getDefaultLogger } from "./lib/logger";
 import client from "prom-client";
 
 import config from "./config";
@@ -29,13 +28,9 @@ export class HttpService {
 
   private metrics;
 
-  constructor(opts: HttpServiceOptions) {
-    const logger =
-      typeof opts?.logger !== "undefined" && typeof opts?.logger !== "string"
-        ? opts.logger
-        : pino(getDefaultLoggerOptions({ level: opts?.logger }));
-    this.app = fastify({ logger });
-    this.logger = generateChildLogger(logger, this.context);
+  constructor() {
+    this.app = fastify();
+    this.logger = getDefaultLogger(config.logLevel, this.context);
     this.redis = new RedisService(this.logger);
     this.notification = new NotificationService(this, this.logger, this.redis);
     this.ws = new WebSocketService(this, this.logger, this.redis, this.notification);

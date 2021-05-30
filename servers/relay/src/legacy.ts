@@ -1,5 +1,4 @@
-import { Logger } from "pino";
-import { generateChildLogger } from "@pedrouid/pino-utils";
+import { Logger, generateChildLogger } from "./lib/logger";
 import { safeJsonStringify } from "safe-json-utils";
 
 import { SubscriptionService } from "./subscription";
@@ -32,7 +31,7 @@ export class LegacyService {
 
   public async onRequest(socketId: string, message: LegacySocketMessage) {
     this.logger.info(`Incoming Legacy Socket Message`);
-    this.logger.debug({ type: "payload", direction: "incoming", payload: message });
+    this.logger.trace({ type: "payload", direction: "incoming", payload: message });
 
     try {
       switch (message.type) {
@@ -67,7 +66,7 @@ export class LegacyService {
     }
 
     await this.searchSubscriptions(socketId, message);
-    
+
   }
 
   private async onSubscribeRequest(socketId: string, message: LegacySocketMessage) {
@@ -138,7 +137,7 @@ export class LegacyService {
     try {
       this.ws.send(socketId, safeJsonStringify(message));
       this.logger.info(`Outgoing Legacy Socket Message`);
-      this.logger.debug({ type: "payload", direction: "outgoing", socketId, message });
+      this.logger.trace({ type: "payload", direction: "outgoing", socketId, message });
     } catch (e) {
       await this.onFailedPush(message);
     }

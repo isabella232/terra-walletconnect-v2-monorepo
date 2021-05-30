@@ -1,7 +1,6 @@
 import redis from "redis";
 import { RelayJsonRpc } from "relay-provider";
-import { Logger } from "pino";
-import { generateChildLogger } from "@pedrouid/pino-utils";
+import { Logger, generateChildLogger } from "./lib/logger";
 import { safeJsonParse, safeJsonStringify } from "safe-json-utils";
 
 import config from "./config";
@@ -189,7 +188,7 @@ export class RedisService {
   }
 
   // ---------- Private ----------------------------------------------- //
-
+  
   private initialize(): void {
     this.logger.trace(`Initialized`);
   }

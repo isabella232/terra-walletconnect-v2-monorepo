@@ -1,6 +1,4 @@
-import { Logger } from "pino";
-import { generateChildLogger } from "@pedrouid/pino-utils";
-
+import { Logger, generateChildLogger } from "./lib/logger";
 import { RedisService } from "./redis";
 import { WebSocketService } from "./ws";
 import { Subscription } from "./types";

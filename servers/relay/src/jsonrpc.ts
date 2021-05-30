@@ -11,7 +11,7 @@ import {
   JsonRpcPayload,
   METHOD_NOT_FOUND,
 } from "@json-rpc-tools/utils";
-import { Logger } from "pino";
+import { Logger, generateChildLogger } from "./lib/logger";
 import { safeJsonStringify } from "safe-json-utils";
 import {
   RELAY_JSONRPC,
@@ -21,7 +21,6 @@ import {
   parseSubscribeRequest,
   parseUnsubscribeRequest,
 } from "relay-provider";
-import { generateChildLogger } from "@pedrouid/pino-utils";
 
 import config from "./config";
 import { RedisService } from "./redis";
@@ -66,7 +65,7 @@ export class JsonRpcService {
   public async onRequest(socketId: string, request: JsonRpcRequest): Promise<void> {
     try {
       this.logger.info(`Incoming JSON-RPC Payload`);
-      this.logger.debug({ type: "payload", direction: "incoming", payload: request, socketId });
+      this.logger.trace({ type: "payload", direction: "incoming", payload: request, socketId });
 
       switch (request.method) {
         case RELAY_JSONRPC.waku.publish:
@@ -102,7 +101,7 @@ export class JsonRpcService {
 
   public async onResponse(socketId: string, response: JsonRpcResponse): Promise<void> {
     this.logger.info(`Incoming JSON-RPC Payload`);
-    this.logger.debug({ type: "payload", direction: "incoming", payload: response, socketId });
+    this.logger.trace({ type: "payload", direction: "incoming", payload: response, socketId });
     const pending = await this.redis.getPendingRequest(response.id);
     if (pending) {
       this.onSubscriptionAcknowledged(socketId, response);
@@ -222,7 +221,7 @@ export class JsonRpcService {
     try {
       this.ws.send(socketId, safeJsonStringify(payload));
       this.logger.info(`Outgoing JSON-RPC Payload`);
-      this.logger.debug({ type: "payload", direction: "outgoing", payload, socketId });
+      this.logger.trace({ type: "payload", direction: "outgoing", payload, socketId });
     } catch (e) {
       await this.onFailedPush(payload);
       throw e;

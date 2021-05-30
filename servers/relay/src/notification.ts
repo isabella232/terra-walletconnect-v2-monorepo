@@ -1,6 +1,5 @@
 import axios from "axios";
-import { Logger } from "pino";
-import { generateChildLogger } from "@pedrouid/pino-utils";
+import { Logger, generateChildLogger } from "./lib/logger";
 
 import { RedisService } from "./redis";
 import { Notification } from "./types";
@@ -22,7 +21,7 @@ export class NotificationService {
     if (notifications && notifications.length) {
       notifications.forEach((notification: Notification) => {
         axios.post(notification.webhook, { topic });
-        this.logger.info({
+        this.logger.trace({
           type: "push",
           webhook: notification.webhook,
           topic,
