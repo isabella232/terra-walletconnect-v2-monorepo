@@ -2,7 +2,8 @@ import { EventEmitter } from "events";
 import fastify, { FastifyInstance } from "fastify";
 import helmet from "fastify-helmet";
 import ws from "fastify-websocket";
-import { Logger, getDefaultLogger } from "./lib/logger";
+import pino, { Logger } from "pino";
+import { getDefaultLoggerOptions, generateChildLogger } from "@pedrouid/pino-utils";
 import client from "prom-client";
 
 import config from "./config";
@@ -16,7 +17,6 @@ import { SERVER_BEAT_INTERVAL, SERVER_EVENTS } from "./constants/http";
 
 export class HttpService {
   public events = new EventEmitter();
-
   public app: FastifyInstance;
   public logger: Logger;
   public redis: RedisService;
@@ -28,9 +28,13 @@ export class HttpService {
 
   private metrics;
 
-  constructor() {
-    this.app = fastify();
-    this.logger = getDefaultLogger(config.logLevel, this.context);
+  constructor(opts: HttpServiceOptions) {
+    const logger =
+      typeof opts?.logger !== "undefined" && typeof opts?.logger !== "string"
+        ? opts.logger
+        : pino({ level: opts?.logger });
+    this.app = fastify({ logger });
+    this.logger = generateChildLogger(logger, this.context);
     this.redis = new RedisService(this.logger);
     this.notification = new NotificationService(this, this.logger, this.redis);
     this.ws = new WebSocketService(this, this.logger, this.redis, this.notification);
@@ -118,6 +122,7 @@ export class HttpService {
 
         res.status(200).send({ success: true });
       } catch (e) {
+        this.logger.error(e);
         res.status(400).send({ message: `Error: ${e.message}` });
       }
     });

@@ -11,7 +11,8 @@ import {
   JsonRpcPayload,
   METHOD_NOT_FOUND,
 } from "@json-rpc-tools/utils";
-import { Logger, generateChildLogger } from "./lib/logger";
+import { Logger } from "pino";
+import { generateChildLogger } from "@pedrouid/pino-utils";
 import { safeJsonStringify } from "safe-json-utils";
 import {
   RELAY_JSONRPC,
@@ -65,7 +66,7 @@ export class JsonRpcService {
   public async onRequest(socketId: string, request: JsonRpcRequest): Promise<void> {
     try {
       this.logger.info(`Incoming JSON-RPC Payload`);
-      this.logger.trace({ type: "payload", direction: "incoming", payload: request, socketId });
+      this.logger.debug({ type: "payload", direction: "incoming", payload: request, socketId });
 
       switch (request.method) {
         case RELAY_JSONRPC.waku.publish:
@@ -93,15 +94,14 @@ export class JsonRpcService {
           return;
       }
     } catch (e) {
-      // eslint-disable-next-line no-console
-      console.error(e);
+      this.logger.warn(e);
       this.socketSend(socketId, formatJsonRpcError(request.id, e.message));
     }
   }
 
   public async onResponse(socketId: string, response: JsonRpcResponse): Promise<void> {
     this.logger.info(`Incoming JSON-RPC Payload`);
-    this.logger.trace({ type: "payload", direction: "incoming", payload: response, socketId });
+    this.logger.debug({ type: "payload", direction: "incoming", payload: response, socketId });
     const pending = await this.redis.getPendingRequest(response.id);
     if (pending) {
       this.onSubscriptionAcknowledged(socketId, response);
@@ -130,9 +130,9 @@ export class JsonRpcService {
       );
       return;
     }
-    this.logger.debug(`Publish Request Received`);
-    this.logger.trace({ type: "method", method: "onPublishRequest", socketId, params });
 
+    this.logger.debug(`Publish Request Received`);
+    this.logger.debug({ type: "method", method: "onPublishRequest", socketId, params });
     await this.notification.push(params.topic);
     await this.redis.setMessage(params);
     await this.searchSubscriptions(socketId, params);
@@ -143,7 +143,7 @@ export class JsonRpcService {
   private async onSubscribeRequest(socketId: string, request: JsonRpcRequest) {
     const params = parseSubscribeRequest(request);
     this.logger.debug(`Subscribe Request Received`);
-    this.logger.trace({ type: "method", method: "onSubscribeRequest", socketId, params });
+    this.logger.debug({ type: "method", method: "onSubscribeRequest", socketId, params });
     const id = this.subscription.set({ topic: params.topic, socketId });
     await this.socketSend(socketId, formatJsonRpcResult(request.id, id));
     await this.pushCachedMessages({ id, topic: params.topic, socketId });
@@ -152,7 +152,7 @@ export class JsonRpcService {
   private async onUnsubscribeRequest(socketId: string, request: JsonRpcRequest) {
     const params = parseUnsubscribeRequest(request);
     this.logger.debug(`Unsubscribe Request Received`);
-    this.logger.trace({ type: "method", method: "onUnsubscribeRequest", socketId, params });
+    this.logger.debug({ type: "method", method: "onUnsubscribeRequest", socketId, params });
 
     this.subscription.remove(params.id);
 
@@ -161,10 +161,10 @@ export class JsonRpcService {
 
   private async searchSubscriptions(socketId: string, params: RelayJsonRpc.PublishParams) {
     this.logger.debug(`Searching subscriptions`);
-    this.logger.trace({ type: "method", method: "searchSubscriptions", socketId, params });
+    this.logger.debug({ type: "method", method: "searchSubscriptions", socketId, params });
     const subscriptions = this.subscription.get(params.topic, socketId);
     this.logger.debug(`Found ${subscriptions.length} subscriptions`);
-    this.logger.trace({ type: "method", method: "searchSubscriptions", subscriptions });
+    this.logger.debug({ type: "method", method: "searchSubscriptions", subscriptions });
     if (subscriptions.length) {
       await Promise.all(
         subscriptions.map((subscriber: Subscription) => {
@@ -177,11 +177,11 @@ export class JsonRpcService {
   private async pushCachedMessages(subscription: Subscription) {
     const { socketId } = subscription;
     this.logger.debug(`Pushing Cached Messages`);
-    this.logger.trace({ type: "method", method: "pushCachedMessages", socketId });
+    this.logger.debug({ type: "method", method: "pushCachedMessages", socketId });
 
     const messages = await this.redis.getMessages(subscription.topic);
     this.logger.debug(`Found ${messages.length} cached messages`);
-    this.logger.trace({ type: "method", method: "pushCachedMessages", messages });
+    this.logger.debug({ type: "method", method: "pushCachedMessages", messages });
     if (messages && messages.length) {
       await Promise.all(
         messages.map((message: string) => {
@@ -210,6 +210,7 @@ export class JsonRpcService {
       await this.socketSend(subscription.socketId, request);
       this.setTimeout(subscription.socketId, request);
     } catch (e) {
+      this.logger.error(e);
       throw e;
     }
   }
@@ -221,8 +222,9 @@ export class JsonRpcService {
     try {
       this.ws.send(socketId, safeJsonStringify(payload));
       this.logger.info(`Outgoing JSON-RPC Payload`);
-      this.logger.trace({ type: "payload", direction: "outgoing", payload, socketId });
+      this.logger.debug({ type: "payload", direction: "outgoing", payload, socketId });
     } catch (e) {
+      this.logger.error(e);
       await this.onFailedPush(payload);
       throw e;
     }
@@ -254,10 +256,12 @@ export class JsonRpcService {
         this.timeout.set(request.id, { counter, timeout: record.timeout });
       } catch (e) {
         // ignore error and consider as acknowledged
+        this.logger.error(e);
         await this.onSubscriptionAcknowledged(socketId, request);
       }
     } else {
       // stop trying and consider as acknowledged
+      this.logger.warn('Stop Trying and Consider as acknowledged');
       await this.onSubscriptionAcknowledged(socketId, request);
     }
   }

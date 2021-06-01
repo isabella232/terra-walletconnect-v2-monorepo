@@ -139,7 +139,7 @@ export class Session extends ISession {
   public create(params: SessionTypes.CreateParams): Promise<SessionTypes.Settled> {
     return new Promise(async (resolve, reject) => {
       this.logger.info(`Create Session`);
-      this.logger.trace({ type: "method", method: "create", params });
+      this.logger.debug({ type: "method", method: "create", params });
       const maxTimeout = params?.timeout || FIVE_MINUTES * 1000;
       const timeout = setTimeout(() => {
         const error = getError(ERROR.SETTLE_TIMEOUT, {
@@ -188,7 +188,7 @@ export class Session extends ISession {
 
   public async respond(params: SessionTypes.RespondParams): Promise<SessionTypes.Pending> {
     this.logger.info(`Respond Session`);
-    this.logger.trace({ type: "method", method: "respond", params });
+    this.logger.debug({ type: "method", method: "respond", params });
     const paramsValidation = validateSessionRespondParams(params);
     if (isValidationInvalid(paramsValidation)) {
       this.logger.error(paramsValidation.error.message);
@@ -273,7 +273,7 @@ export class Session extends ISession {
 
   public async upgrade(params: SessionTypes.UpgradeParams): Promise<SessionTypes.Settled> {
     this.logger.info(`Upgrade Session`);
-    this.logger.trace({ type: "method", method: "upgrade", params });
+    this.logger.debug({ type: "method", method: "upgrade", params });
     const session = await this.settled.get(params.topic);
     const participant: CryptoTypes.Participant = { publicKey: session.self.publicKey };
     const upgrade = await this.handleUpgrade(params.topic, params, participant);
@@ -284,7 +284,7 @@ export class Session extends ISession {
 
   public async update(params: SessionTypes.UpdateParams): Promise<SessionTypes.Settled> {
     this.logger.info(`Update Session`);
-    this.logger.trace({ type: "method", method: "update", params });
+    this.logger.debug({ type: "method", method: "update", params });
     const session = await this.settled.get(params.topic);
     const participant: CryptoTypes.Participant = { publicKey: session.self.publicKey };
     const update = await this.handleUpdate(params.topic, params, participant);
@@ -328,7 +328,7 @@ export class Session extends ISession {
 
   public async delete(params: SessionTypes.DeleteParams): Promise<void> {
     this.logger.info(`Delete Session`);
-    this.logger.trace({ type: "method", method: "delete", params });
+    this.logger.debug({ type: "method", method: "delete", params });
     this.settled.delete(params.topic, params.reason);
   }
 
@@ -367,7 +367,7 @@ export class Session extends ISession {
 
   protected async propose(params: SessionTypes.ProposeParams): Promise<SessionTypes.Pending> {
     this.logger.info(`Propose Session`);
-    this.logger.trace({ type: "method", method: "propose", params });
+    this.logger.debug({ type: "method", method: "propose", params });
     const paramsValidation = validateSessionProposeParams(params);
     if (isValidationInvalid(paramsValidation)) {
       this.logger.error(paramsValidation.error.message);
@@ -410,7 +410,7 @@ export class Session extends ISession {
 
   protected async settle(params: SessionTypes.SettleParams): Promise<SessionTypes.Settled> {
     this.logger.info(`Settle Session`);
-    this.logger.trace({ type: "method", method: "settle", params });
+    this.logger.debug({ type: "method", method: "settle", params });
     const topic = await this.client.crypto.generateSharedKey(params.self, params.peer);
     const session: SessionTypes.Settled = {
       topic,
@@ -431,7 +431,7 @@ export class Session extends ISession {
   protected async onResponse(payloadEvent: SubscriptionEvent.Payload): Promise<void> {
     const { topic, payload } = payloadEvent;
     this.logger.info(`Receiving Session response`);
-    this.logger.trace({ type: "method", method: "onResponse", topic, payload });
+    this.logger.debug({ type: "method", method: "onResponse", topic, payload });
     const request = payload as JsonRpcRequest<SessionTypes.Outcome>;
     const pending = await this.pending.get(topic);
     let error: ErrorResponse | undefined;
@@ -489,7 +489,7 @@ export class Session extends ISession {
   protected async onAcknowledge(payloadEvent: SubscriptionEvent.Payload): Promise<void> {
     const { topic, payload } = payloadEvent;
     this.logger.info(`Receiving Session acknowledge`);
-    this.logger.trace({ type: "method", method: "onAcknowledge", topic, payload });
+    this.logger.debug({ type: "method", method: "onAcknowledge", topic, payload });
     const response = payload as JsonRpcResponse;
     const pending = await this.pending.get(topic);
     if (!isSessionResponded(pending)) return;
@@ -503,7 +503,7 @@ export class Session extends ISession {
   protected async onMessage(payloadEvent: SubscriptionEvent.Payload): Promise<void> {
     const { topic, payload } = payloadEvent;
     this.logger.debug(`Receiving Session message`);
-    this.logger.trace({ type: "method", method: "onMessage", topic, payload });
+    this.logger.debug({ type: "method", method: "onMessage", topic, payload });
     if (isJsonRpcRequest(payload)) {
       const request = payload as JsonRpcRequest;
       const session = await this.settled.get(payloadEvent.topic);
@@ -557,7 +557,7 @@ export class Session extends ISession {
         chainId: params.chainId,
       };
       this.logger.debug(`Receiving Session payload`);
-      this.logger.trace({ type: "method", method: "onPayload", ...sessionPayloadEvent });
+      this.logger.debug({ type: "method", method: "onPayload", ...sessionPayloadEvent });
       this.onPayloadEvent(sessionPayloadEvent);
     } else {
       const sessionPayloadEvent: SessionTypes.PayloadEvent = {
@@ -565,7 +565,7 @@ export class Session extends ISession {
         payload,
       };
       this.logger.debug(`Receiving Session payload`);
-      this.logger.trace({ type: "method", method: "onPayload", ...sessionPayloadEvent });
+      this.logger.debug({ type: "method", method: "onPayload", ...sessionPayloadEvent });
       this.onPayloadEvent(sessionPayloadEvent);
     }
   }
@@ -573,7 +573,7 @@ export class Session extends ISession {
   protected async onUpdate(payloadEvent: SubscriptionEvent.Payload): Promise<void> {
     const { topic, payload } = payloadEvent;
     this.logger.debug(`Receiving Session update`);
-    this.logger.trace({ type: "method", method: "onUpdate", topic, payload });
+    this.logger.debug({ type: "method", method: "onUpdate", topic, payload });
     const request = payloadEvent.payload as JsonRpcRequest;
     const session = await this.settled.get(payloadEvent.topic);
     try {
@@ -591,7 +591,7 @@ export class Session extends ISession {
   protected async onUpgrade(payloadEvent: SubscriptionEvent.Payload): Promise<void> {
     const { topic, payload } = payloadEvent;
     this.logger.debug(`Receiving Session upgrade`);
-    this.logger.trace({ type: "method", method: "onUpgrade", topic, payload });
+    this.logger.debug({ type: "method", method: "onUpgrade", topic, payload });
     const request = payloadEvent.payload as JsonRpcRequest;
     const session = await this.settled.get(payloadEvent.topic);
     try {

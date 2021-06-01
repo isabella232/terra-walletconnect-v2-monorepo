@@ -1,4 +1,5 @@
-import { Logger, generateChildLogger } from "./lib/logger";
+import { Logger } from "pino";
+import { generateChildLogger } from "@pedrouid/pino-utils";
 import { RedisService } from "./redis";
 import { WebSocketService } from "./ws";
 import { Subscription } from "./types";
@@ -29,7 +30,7 @@ export class SubscriptionService {
   public set(subscription: Omit<Subscription, "id">): string {
     const id = generateRandomBytes32();
     this.logger.debug(`Setting Subscription`);
-    this.logger.trace({ type: "method", method: "set", topic: subscription.topic });
+    this.logger.debug({ type: "method", method: "set", topic: subscription.topic });
     this.subscriptions.push({ ...subscription, id });
     this.redis.setBroadcastChannel(subscription.topic);
     return id;
@@ -42,7 +43,7 @@ export class SubscriptionService {
       this.subscriptions.filter(sub => sub.topic === topic) ;
     
     this.logger.debug(`Getting Subscriptions`);
-    this.logger.trace({ type: "method", method: "get", topic, subscriptions });
+    this.logger.debug({ type: "method", method: "get", topic, subscriptions });
     return subscriptions;
   }
 
@@ -52,7 +53,7 @@ export class SubscriptionService {
 
   public remove(id: string): void {
     this.logger.debug(`Removing Subscription`);
-    this.logger.trace({ type: "method", method: "remove", id });
+    this.logger.debug({ type: "method", method: "remove", id });
     const deletings = this.subscriptions.filter(sub => sub.id === id);
     if (deletings) {
       deletings.forEach((deleting) => this.redis.deleteBroadcastChannel(deleting.topic));
@@ -62,7 +63,7 @@ export class SubscriptionService {
 
   public removeSocket(socketId: string): void {
     this.logger.debug(`Removing Socket Subscriptions`);
-    this.logger.trace({ type: "method", method: "removeSocket", socketId });
+    this.logger.debug({ type: "method", method: "removeSocket", socketId });
     const deletings = this.subscriptions.filter(sub => sub.socketId !== socketId);
     if (deletings) {
       deletings.forEach((deleting) => this.redis.deleteBroadcastChannel(deleting.topic));

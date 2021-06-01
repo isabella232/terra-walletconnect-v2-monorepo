@@ -62,7 +62,7 @@ export class JsonRpcHistory extends IJsonRpcHistory {
   public async set(topic: string, request: JsonRpcRequest, chainId?: string): Promise<void> {
     await this.isEnabled();
     this.logger.debug(`Setting JSON-RPC request history record`);
-    this.logger.trace({ type: "method", method: "set", topic, request, chainId });
+    this.logger.debug({ type: "method", method: "set", topic, request, chainId });
     if (this.records.has(request.id)) {
       const error = getError(ERROR.RECORD_ALREADY_EXISTS, {
         context: this.getHistoryContext(),
@@ -84,7 +84,7 @@ export class JsonRpcHistory extends IJsonRpcHistory {
   public async update(topic: string, response: JsonRpcResponse): Promise<void> {
     await this.isEnabled();
     this.logger.debug(`Updating JSON-RPC response history record`);
-    this.logger.trace({ type: "method", method: "update", topic, response });
+    this.logger.debug({ type: "method", method: "update", topic, response });
     if (!this.records.has(response.id)) return;
     const record = await this.getRecord(response.id);
     if (record.topic !== topic) return;
@@ -99,7 +99,7 @@ export class JsonRpcHistory extends IJsonRpcHistory {
   public async get(topic: string, id: number): Promise<JsonRpcRecord> {
     await this.isEnabled();
     this.logger.debug(`Getting record`);
-    this.logger.trace({ type: "method", method: "get", topic, id });
+    this.logger.debug({ type: "method", method: "get", topic, id });
     const record = await this.getRecord(id);
     if (record.topic !== topic) {
       const error = getError(ERROR.MISMATCHED_TOPIC, {
@@ -115,7 +115,7 @@ export class JsonRpcHistory extends IJsonRpcHistory {
   public async delete(topic: string, id?: number): Promise<void> {
     await this.isEnabled();
     this.logger.debug(`Deleting record`);
-    this.logger.trace({ type: "method", method: "delete", id });
+    this.logger.debug({ type: "method", method: "delete", id });
     this.values.forEach((record: JsonRpcRecord) => {
       if (record.topic === topic) {
         if (typeof id !== "undefined" && record.id !== id) return;
@@ -204,7 +204,7 @@ export class JsonRpcHistory extends IJsonRpcHistory {
       );
       await this.enable();
       this.logger.debug(`Successfully Restored records for ${this.getHistoryContext()}`);
-      this.logger.trace({ type: "method", method: "restore", records: this.values });
+      this.logger.debug({ type: "method", method: "restore", records: this.values });
     } catch (e) {
       this.logger.debug(`Failed to Restore records for ${this.getHistoryContext()}`);
       this.logger.error(e);

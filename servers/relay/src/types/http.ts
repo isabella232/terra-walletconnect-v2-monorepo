@@ -1,5 +1,5 @@
 import { RequestGenericInterface } from "fastify";
-import { Logger } from "../lib/logger";
+import { Logger } from "pino";
 
 export interface HttpServiceOptions {
   logger?: string | Logger;

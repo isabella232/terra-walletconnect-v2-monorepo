@@ -59,7 +59,7 @@ export class Subscription<Data = any> extends ISubscription<Data> {
       this.update(topic, data);
     } else {
       this.logger.debug(`Setting subscription`);
-      this.logger.trace({ type: "method", method: "set", topic, data, opts });
+      this.logger.debug({ type: "method", method: "set", topic, data, opts });
       await this.subscribeAndSet(topic, data, opts);
       this.events.emit(SUBSCRIPTION_EVENTS.created, {
         topic,
@@ -71,7 +71,7 @@ export class Subscription<Data = any> extends ISubscription<Data> {
   public async get(topic: string): Promise<Data> {
     await this.isEnabled();
     this.logger.debug(`Getting subscription`);
-    this.logger.trace({ type: "method", method: "get", topic });
+    this.logger.debug({ type: "method", method: "get", topic });
     const subscription = await this.getSubscription(topic);
     return subscription.data;
   }
@@ -79,7 +79,7 @@ export class Subscription<Data = any> extends ISubscription<Data> {
   public async update(topic: string, update: Partial<Data>): Promise<void> {
     await this.isEnabled();
     this.logger.debug(`Updating subscription`);
-    this.logger.trace({ type: "method", method: "update", topic, update });
+    this.logger.debug({ type: "method", method: "update", topic, update });
     const subscription = await this.getSubscription(topic);
     const data = { ...subscription.data, ...update };
     this.subscriptions.set(topic, {
@@ -98,7 +98,7 @@ export class Subscription<Data = any> extends ISubscription<Data> {
     await this.isEnabled();
 
     this.logger.debug(`Deleting subscription`);
-    this.logger.trace({ type: "method", method: "delete", topic, reason });
+    this.logger.debug({ type: "method", method: "delete", topic, reason });
     const subscription = await this.getSubscription(topic);
     this.subscriptions.delete(topic);
     await this.client.relayer.unsubscribe(subscription.id, {
@@ -250,7 +250,7 @@ export class Subscription<Data = any> extends ISubscription<Data> {
       );
       await this.enable();
       this.logger.debug(`Successfully Restored subscriptions for ${this.getSubscriptionContext()}`);
-      this.logger.trace({ type: "method", method: "restore", subscriptions: this.values });
+      this.logger.debug({ type: "method", method: "restore", subscriptions: this.values });
     } catch (e) {
       this.logger.debug(`Failed to Restore subscriptions for ${this.getSubscriptionContext()}`);
       this.logger.error(e);

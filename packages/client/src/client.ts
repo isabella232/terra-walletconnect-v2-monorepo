@@ -109,7 +109,7 @@ export class Client extends IClient {
 
   public async connect(params: ClientTypes.ConnectParams): Promise<SessionTypes.Settled> {
     this.logger.debug(`Connecting Application`);
-    this.logger.trace({ type: "method", method: "connect", params });
+    this.logger.debug({ type: "method", method: "connect", params });
     try {
       if (typeof params.pairing === undefined) {
         this.logger.info("Connecing with existing pairing");
@@ -118,7 +118,7 @@ export class Client extends IClient {
         typeof params.pairing === "undefined"
           ? await this.pairing.create()
           : await this.pairing.get(params.pairing.topic);
-      this.logger.trace({ type: "method", method: "connect", pairing });
+      this.logger.debug({ type: "method", method: "connect", pairing });
       const metadata = params.metadata || this.metadata;
       if (typeof metadata === "undefined") {
         const error = getError(ERROR.MISSING_OR_INVALID, { name: "app metadata" });
@@ -135,7 +135,7 @@ export class Client extends IClient {
         },
       });
       this.logger.debug(`Application Connection Successful`);
-      this.logger.trace({ type: "method", method: "connect", session });
+      this.logger.debug({ type: "method", method: "connect", session });
       return session;
     } catch (e) {
       this.logger.debug(`Application Connection Failure`);
@@ -146,7 +146,7 @@ export class Client extends IClient {
 
   public async pair(params: ClientTypes.PairParams): Promise<string> {
     this.logger.debug(`Pairing`);
-    this.logger.trace({ type: "method", method: "pair", params });
+    this.logger.debug({ type: "method", method: "pair", params });
     const proposal = formatPairingProposal(params.uri);
     const approved = proposal.proposer.controller !== this.controller;
     const reason = approved
@@ -160,17 +160,17 @@ export class Client extends IClient {
     }
     if (isPairingFailed(pending.outcome)) {
       this.logger.debug(`Pairing Failure`);
-      this.logger.trace({ type: "method", method: "pair", outcome: pending.outcome });
+      this.logger.debug({ type: "method", method: "pair", outcome: pending.outcome });
       throw new Error(pending.outcome.reason.message);
     }
     this.logger.debug(`Pairing Success`);
-    this.logger.trace({ type: "method", method: "pair", pending });
+    this.logger.debug({ type: "method", method: "pair", pending });
     return pending.outcome.topic;
   }
 
   public async approve(params: ClientTypes.ApproveParams): Promise<SessionTypes.Settled> {
     this.logger.debug(`Approving Session Proposal`);
-    this.logger.trace({ type: "method", method: "approve", params });
+    this.logger.debug({ type: "method", method: "approve", params });
     if (typeof params.response === "undefined") {
       const error = getError(ERROR.MISSING_RESPONSE, { context: "session" });
       this.logger.error(error.message);
@@ -200,17 +200,17 @@ export class Client extends IClient {
     }
     if (isSessionFailed(pending.outcome)) {
       this.logger.debug(`Session Proposal Approval Failure`);
-      this.logger.trace({ type: "method", method: "approve", outcome: pending.outcome });
+      this.logger.debug({ type: "method", method: "approve", outcome: pending.outcome });
       throw new Error(pending.outcome.reason.message);
     }
     this.logger.debug(`Session Proposal Approval Success`);
-    this.logger.trace({ type: "method", method: "approve", pending });
+    this.logger.debug({ type: "method", method: "approve", pending });
     return this.session.get(pending.outcome.topic);
   }
 
   public async reject(params: ClientTypes.RejectParams): Promise<void> {
     this.logger.debug(`Rejecting Session Proposal`);
-    this.logger.trace({ type: "method", method: "reject", params });
+    this.logger.debug({ type: "method", method: "reject", params });
     const pending = await this.session.respond({
       approved: false,
       proposal: params.proposal,
@@ -218,7 +218,7 @@ export class Client extends IClient {
       reason: params.reason,
     });
     this.logger.debug(`Session Proposal Response Success`);
-    this.logger.trace({ type: "method", method: "reject", pending });
+    this.logger.debug({ type: "method", method: "reject", pending });
   }
 
   public async upgrade(params: ClientTypes.UpgradeParams): Promise<void> {
@@ -243,7 +243,7 @@ export class Client extends IClient {
 
   public async disconnect(params: ClientTypes.DisconnectParams): Promise<void> {
     this.logger.debug(`Disconnecting Application`);
-    this.logger.trace({ type: "method", method: "disconnect", params });
+    this.logger.debug({ type: "method", method: "disconnect", params });
     await this.session.delete(params);
   }
 

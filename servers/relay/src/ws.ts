@@ -1,6 +1,7 @@
 import client from "prom-client";
 import { EventEmitter } from "events";
-import { Logger, generateChildLogger } from "./lib/logger";
+import { generateChildLogger } from "@pedrouid/pino-utils";
+import { Logger } from "pino";
 import { safeJsonParse } from "safe-json-utils";
 import { isJsonRpcPayload } from "@json-rpc-tools/utils";
 
@@ -95,7 +96,7 @@ export class WebSocketService {
     }
     const socket = this.getSocket(socketId);
     this.logger.debug(`Outgoing Socket Message`);
-    this.logger.trace({ type: "message", direction: "outgoing", message });
+    this.logger.debug({ type: "message", direction: "outgoing", message });
     socket.send(message);
   }
 
@@ -112,6 +113,7 @@ export class WebSocketService {
       const socket = this.getSocket(socketId);
       return socket.readyState === 1;
     } catch (e) {
+      this.logger.error(e);
       return false;
     }
   }
@@ -120,14 +122,14 @@ export class WebSocketService {
     const socketId = generateRandomBytes32();
     this.metrics.newConnection.inc();
     this.logger.info(`New Socket Connected`);
-    this.logger.trace({ type: "event", event: "connection", socketId });    
+    this.logger.debug({ type: "event", event: "connection", socketId });    
     this.sockets.set(socketId, socket);
     this.events.emit(SOCKET_EVENTS.open, socketId);
     socket.on("message", async data => {
       this.metrics.totalMessages.inc();
       const message = data.toString();
       this.logger.debug(`Incoming Socket Message`);
-      this.logger.trace({ type: "message", direction: "incoming", message });
+      this.logger.debug({ type: "message", direction: "incoming", message });
 
       if (!message || !message.trim()) {
         return this.send(socketId, "Missing or invalid socket data");
