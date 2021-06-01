@@ -110,14 +110,50 @@ Relay get metrics URL:
 > response process, http, websocket.. metrics,  If Ok
 
 
-Key indicators can be obtained through a combination of metrics.
+Metrics.
+
+| Name | Descriptions | Remarks |
+| --------------- | --------------------- | ---------------- |
+| `relay_process_cpu_user_seconds_total` | Total user CPU time spent in seconds | |
+| `relay_process_cpu_system_seconds_total` | Total system CPU time spent in seconds | |
+| `relay_process_cpu_seconds_total` | Total user and system CPU time spent in seconds | |
+| `relay_process_start_time_seconds` | Start time of the process since unix epoch in seconds | |
+| `relay_process_resident_memory_bytes` | Resident memory size in bytes | |
+| `relay_nodejs_eventloop_lag_seconds` | Lag of event loop in seconds| |
+| `relay_nodejs_eventloop_lag_min_seconds` | The minimum recorded event loop delay | |
+| `relay_nodejs_eventloop_lag_max_seconds` | The maximum recorded event loop delay | |
+| `relay_nodejs_eventloop_lag_mean_seconds` | The mean of the recorded event loop delays | |
+| `relay_nodejs_eventloop_lag_stddev_seconds` | The standard deviation of the recorded event loop delays | |
+| `relay_nodejs_eventloop_lag_p50_seconds` | The 50th percentile of the recorded event loop delays | |
+| `relay_nodejs_eventloop_lag_p90_seconds` | The 90th percentile of the recorded event loop delays | |
+| `relay_nodejs_eventloop_lag_p99_seconds` | The 99th percentile of the recorded event loop delays | |
+| `relay_nodejs_active_handles{type="WriteStream"}` | Number of active libuv handles grouped by handle type. Every handle type is C++ class name | type: WriteStream, Socket, Timer, Server |
+| `relay_nodejs_active_handles_total` | Total number of active handles | |
+| `relay_nodejs_active_requests` | Number of active libuv requests grouped by request type. Every request type is C++ class name | |
+| `relay_nodejs_active_requests_total` | Total number of active requests | |
+| `relay_nodejs_heap_size_total_bytes` | Process heap size from Node.js in bytes | |
+| `relay_nodejs_heap_size_used_bytes` | Process heap size used from Node.js in bytes | |
+| `relay_nodejs_external_memory_bytes` | Node.js external memory size in bytes | |
+| `relay_nodejs_heap_space_size_total_bytes{space="read_only"}` | Process heap space size total from Node.js in bytes | space: read_only, new, old, code, map, large_object |
+| `relay_nodejs_heap_space_size_used_bytes{space="read_only"}` | Process heap space size used from Node.js in bytes | space: read_only, new, old, code, map, large_object |
+| `relay_nodejs_heap_space_size_available_bytes{space="read_only"}` | Process heap space size available from Node.js in bytes | space: read_only, new, old, code, map, large_object |
+| `relay_nodejs_version_info{version="v10.24.1",major="10",minor="24",patch="1"}` | Node.js version info | | 
+| `relay_nodejs_gc_duration_seconds_bucket` | Garbage collection duration by kind, one of major, minor, incremental or weakcb | |
+| `relay_websocket_new_connections` | Sum of opened ws connections | custom metric |
+| `relay_websocket_closed_connections` | Sum of closed ws connections | custom metric |
+| `relay_websocket_messages_total` | Total amount of messages | custom metric |
+| `relay_hello_counter` | How much the /hello has been called | custom metric |
+
+
+
+Indicators can be obtained through a combination of metrics.
 
 | Name | Descriptions | Related metrics |
 | --------------- | --------------------- | ---------------- |
-| `Messages` | Amount of web socket messages per minute | websocket_messages_total | 
-| `Active WS connections` | Amount of open web socket connections | process_open_fds, websocket_new_connections |
-| `Node event loop Lag seconds` | Heatmap of Node Event Loop Lag Seconds | nodejs_eventloop_lag_seconds |
-| `Connections` | Rate of New/Closed connections per minute | websocket_new_connections (custom),  websocket_closed_connections (custom) |
-| `Ratio closed/new connections` | Division of websocket closed connections and New connections per 5 minutes | websocket_closed_connections (custom), websocket_new_connections (custom)  |
-| `Event loop lag mean seconds` | Nodejs default prometheus eventloop lag mean seconds | nodejs_eventloop_lag_mean_seconds |
-| `CPU seconds` | Rate of System/User CPU process seconds per minute | process_cpu_seconds_total, process_cpu_system_seconds_total, process_cpu_user_seconds_total |
+| `Messages` | Amount of web socket messages per minute | relay_websocket_messages_total | 
+| `Active WS connections` | Amount of open web socket connections | relay_process_open_fds, relay_websocket_new_connections |
+| `Node event loop Lag seconds` | Heatmap of Node Event Loop Lag Seconds | relay_nodejs_eventloop_lag_seconds |
+| `Connections` | Rate of New/Closed connections per minute | websocket_new_connections,  relay_websocket_closed_connections |
+| `Ratio closed/new connections` | Division of websocket closed connections and New connections per 5 minutes | relay_websocket_closed_connections, relay_websocket_new_connections |
+| `Event loop lag mean seconds` | Nodejs default prometheus eventloop lag mean seconds | relay_nodejs_eventloop_lag_mean_seconds |
+| `CPU seconds` | Rate of System/User CPU process seconds per minute | relay_process_cpu_seconds_total, relay_process_cpu_system_seconds_total, relay_process_cpu_user_seconds_total |
