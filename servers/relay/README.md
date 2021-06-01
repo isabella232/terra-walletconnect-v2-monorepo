@@ -112,7 +112,7 @@ Relay get metrics URL:
 
 
 ## Monitoring
-### Metricss
+### Metrics
 
 | Name | Descriptions | Remarks |
 | -------- | --------------------- | --------- |
