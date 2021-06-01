@@ -1,7 +1,7 @@
 {
   "name": "@walletconnect/relay-server",
   "description": "Relay Server for WalletConnect Protocol",
-  "version": "2.0.0-rc.1",
+  "version": "2.0.0-rc.2",
   "private": true,
   "author": "WalletConnect Labs <walletconnectlabs.com>",
   "homepage": "https://github.com/walletconnect/walletconnect-monorepo/",
@@ -31,21 +31,21 @@
     "lint": "eslint -c '../../.eslintrc' --fix './src/**/*.ts'"
   },
   "dependencies": {
-    "@json-rpc-tools/utils": "^1.7.2",
+    "@json-rpc-tools/utils": "^1.7.6",
     "@pedrouid/pino-utils": "^1.0.1",
     "axios": "^0.21.1",
     "date-fns-timezone": "^0.1.4",
     "enc-utils": "^3.0.0",
-    "fastify": "^3.10.1",
-    "fastify-helmet": "^5.1.0",
-    "fastify-websocket": "^3.0.0",
-    "pino": "^6.11.0",
-    "pino-pretty": "^4.3.0",
+    "fastify": "^3.17.0",
+    "fastify-helmet": "^5.3.1",
+    "fastify-websocket": "^3.2.0",
+    "pino": "^6.11.3",
+    "pino-pretty": "^4.8.0",
     "prom-client": "^13.0.0",
     "redis": "^2.8.0",
     "relay-provider": "^1.2.1",
     "safe-json-utils": "^1.1.1",
-    "tslib": "^2.1.0"
+    "tslib": "^2.2.0"
   },
   "devDependencies": {
     "@types/axios": "^0.14.0",
