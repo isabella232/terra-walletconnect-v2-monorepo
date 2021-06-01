@@ -115,7 +115,7 @@ Relay get metrics URL:
 ### Metricss
 
 | Name | Descriptions | Remarks |
-| --------------- | --------------------- | ---------------- |
+| -------- | --------------------- | --------- |
 | `relay_process_cpu_user_seconds_total` | Total user CPU time spent in seconds | |
 | `relay_process_cpu_system_seconds_total` | Total system CPU time spent in seconds | |
 | `relay_process_cpu_seconds_total` | Total user and system CPU time spent in seconds | |
