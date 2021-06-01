@@ -3,7 +3,7 @@ import fastify, { FastifyInstance } from "fastify";
 import helmet from "fastify-helmet";
 import ws from "fastify-websocket";
 import pino, { Logger } from "pino";
-import { getDefaultLoggerOptions, generateChildLogger } from "@pedrouid/pino-utils";
+import { generateChildLogger } from "@pedrouid/pino-utils";
 import client from "prom-client";
 
 import config from "./config";
@@ -74,17 +74,42 @@ export class HttpService {
 
   private registerApi() {
     this.app.register(helmet);
-    this.app.register(ws);
-
-    this.app.get("/", { websocket: true }, connection => {
-      connection.on("error", (e: Error) => {
-        if (!e.message.includes("Invalid WebSocket frame")) {
-          this.logger.fatal(e);
-          throw e;
-        }
-      });
-      this.ws.addNewSocket(connection.socket as any);
+    this.app.register(ws, {
+      errorHandler: function (error, conn /* SocketStream */, req /* FastifyRequest */, reply /* FastifyReply */) {
+        // destroy/close connection
+        conn.destroy(error)
+      },
+      options: {
+        maxPayload: 1048576, // we set the maximum allowed messages size to 1 MiB (1024 bytes * 1024 bytes)
+        // verifyClient: function (info, next) {
+        //   if (info.req.headers['x-fastify-header'] !== 'fastify is awesome !') {
+        //     return next(false) // the connection is not allowed
+        //   }
+        //   next(true) // the connection is allowed
+        // }
+      }
     });
+
+    this.app.route({
+      method: 'GET',
+      url: '/',
+      handler: (req, reply) => {
+        this.metrics.hello.inc();
+        reply
+          .status(200)
+          .send(`Hello World, this is Relay Server v${config.VERSION}@${config.GITHASH}`);
+      },
+      wsHandler: (connection, req) => {
+        connection.setEncoding('utf8')
+        connection.on("error", (e: Error) => {
+          if (!e.message.includes("Invalid WebSocket frame")) {
+            this.logger.fatal(e);
+            throw e;
+          }
+        });
+        this.ws.addNewSocket(connection.socket as any);
+      }
+    })
 
     this.app.get("/health", (_, res) => {
       res.status(200).send();
