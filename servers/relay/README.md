@@ -139,7 +139,7 @@ Relay get metrics URL:
 | `relay_nodejs_heap_space_size_total_bytes{space="read_only"}` | Process heap space size total from Node.js in bytes | space: read_only, new, old, code, map, large_object |
 | `relay_nodejs_heap_space_size_used_bytes{space="read_only"}` | Process heap space size used from Node.js in bytes | space: read_only, new, old, code, map, large_object |
 | `relay_nodejs_heap_space_size_available_bytes{space="read_only"}` | Process heap space size available from Node.js in bytes | space: read_only, new, old, code, map, large_object |
-| `relay_nodejs_version_info{version="v10.24.1",major="10",minor="24",patch="1"}` | Node.js version info | | 
+| `relay_nodejs_version_info` | Node.js version info | | 
 | `relay_nodejs_gc_duration_seconds_bucket` | Garbage collection duration by kind, one of major, minor, incremental or weakcb | |
 | `relay_websocket_new_connections` | Sum of opened ws connections | custom metric |
 | `relay_websocket_closed_connections` | Sum of closed ws connections | custom metric |
