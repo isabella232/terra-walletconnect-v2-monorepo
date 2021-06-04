@@ -172,19 +172,13 @@ export class RedisService {
     });
   }
 
-  public broadcast(topic: string, message: string) {
-    this.pub.publish(topic, message);
-  }
-
-  public setBroadcastChannel(topic: string) {
-    this.sub.subscribe(topic);
-  }
-
-  public deleteBroadcastChannel(topic: string) {
-    this.sub.unsubscribe(topic);
+  public broadcastRequest(message: string) {
+    this.logger.debug(`Broadcasting Internal Request`);
+    this.pub.publish('relay', message);
   }
 
   public setBroadcastReceiver(receiver: any) {
+    this.sub.subscribe('relay');
     this.sub.on("message", receiver);
   }
 

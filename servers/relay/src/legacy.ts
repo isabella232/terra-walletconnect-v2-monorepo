@@ -1,13 +1,20 @@
 import { Logger } from "pino";
 import { generateChildLogger } from "@pedrouid/pino-utils";
-import { safeJsonStringify } from "safe-json-utils";
+import { safeJsonStringify, safeJsonParse } from "safe-json-utils";
 
+import config from "./config";
 import { SubscriptionService } from "./subscription";
 import { NotificationService } from "./notification";
 import { RedisService } from "./redis";
 import { LegacySocketMessage, Subscription } from "./types";
+import {
+  isLegacyDisabled,
+  isLegacySocketMessage,
+} from "./utils";
+
 import { WebSocketService } from "./ws";
 import { HttpService } from "./http";
+
 
 export class LegacyService {
   public subscription: SubscriptionService;
@@ -54,7 +61,17 @@ export class LegacyService {
 
   private initialize(): void {
     this.logger.trace(`Initialized`);
-    this.redis.setBroadcastReceiver(this.onBroadcastRequest.bind(this));
+    this.redis.setBroadcastReceiver((channel: string, message: string) => {
+      const payload = safeJsonParse(message);
+      if (isLegacySocketMessage(payload)) {
+        if (isLegacyDisabled(config.mode)) {
+          return;
+        }
+
+        if (payload.type === 'pub')
+          this.onInternalPublishRequest(payload)
+      }
+    });
   }
 
   private async onPublishRequest(socketId: string, message: LegacySocketMessage) {
@@ -78,12 +95,13 @@ export class LegacyService {
     await this.pushCachedMessages(socketId, topic);
   }
 
-  private async onBroadcastRequest(topic: string, message: string) {
-    this.logger.debug(`Broadcast Request Received`);
-    this.logger.debug({ type: "method", method: "onBroadcastRequest", topic, message });
+  private async onInternalPublishRequest(message: LegacySocketMessage) {
+    const topic = message.topic;
+    this.logger.debug(`Internal Publish Request Received`);
+    this.logger.debug({ type: "method", method: "onBroadcastRequest", message, topic });
 
     const subscriptions = this.subscription.get(topic);
-    this.logger.debug(`Found ${subscriptions.length} subscriptions`);
+    this.logger.debug(`Found ${subscriptions.length} subscriptions remotely`);
     this.logger.debug({ type: "method", method: "searchSubscriptions", subscriptions });
     if (subscriptions.length) {
       await Promise.all(
@@ -109,7 +127,7 @@ export class LegacyService {
       );
     } else {
       await this.redis.setLegacyCached(message);
-      await this.redis.broadcast(message.topic, JSON.stringify(message));
+      await this.redis.broadcastRequest(JSON.stringify(message));
     }
   }
 

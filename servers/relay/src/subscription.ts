@@ -32,7 +32,6 @@ export class SubscriptionService {
     this.logger.debug(`Setting Subscription`);
     this.logger.debug({ type: "method", method: "set", topic: subscription.topic });
     this.subscriptions.push({ ...subscription, id });
-    this.redis.setBroadcastChannel(subscription.topic);
     return id;
   }
 
@@ -52,23 +51,15 @@ export class SubscriptionService {
   }
 
   public remove(id: string): void {
-    this.logger.info(`Removing Subscription`);
+    this.logger.debug(`Removing Subscription`);
     this.logger.debug({ type: "method", method: "remove", id });
-    const deletings = this.subscriptions.filter(sub => sub.id === id);
-    if (deletings) {
-      deletings.forEach((deleting) => this.redis.deleteBroadcastChannel(deleting.topic));
-      this.subscriptions = this.subscriptions.filter(sub => sub.id !== id);
-    }
+    this.subscriptions = this.subscriptions.filter(sub => sub.id !== id);
   }
 
   public removeSocket(socketId: string): void {
-    this.logger.info(`Removing Socket Subscriptions`);
+    this.logger.debug(`Removing Socket Subscriptions`);
     this.logger.debug({ type: "method", method: "removeSocket", socketId });
-    const deletings = this.subscriptions.filter(sub => sub.socketId !== socketId);
-    if (deletings) {
-      deletings.forEach((deleting) => this.redis.deleteBroadcastChannel(deleting.topic));
-      this.subscriptions = this.subscriptions.filter(sub => sub.socketId !== socketId);
-    }
+    this.subscriptions = this.subscriptions.filter(sub => sub.socketId !== socketId);
   }
 
   // ---------- Private ----------------------------------------------- //
