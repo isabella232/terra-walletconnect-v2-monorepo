@@ -91,8 +91,6 @@ export class LegacyService {
           this.pushCachedMessages(subscriber.socketId, topic),
         ),
       );
-    } else {
-      this.logger.warn(`Not Found Subscriptions`);
     }
   }
 

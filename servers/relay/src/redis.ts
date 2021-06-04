@@ -99,7 +99,8 @@ export class RedisService {
           const message = safeJsonParse(data);
           messages.push(message);
         });
-        this.client.del(`legacy:${topic}`);
+        if (messages.length > 0) 
+          this.client.del(`legacy:${topic}`);
         this.logger.debug(`Getting Legacy Published`);
         this.logger.debug({ type: "method", method: "getLegacyCached", topic, messages });
         resolve(messages);
