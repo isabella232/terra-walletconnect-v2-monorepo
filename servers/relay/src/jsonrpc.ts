@@ -188,9 +188,7 @@ export class JsonRpcService {
           this.pushSubscription(subscription, message);
         }),
       );
-    } else {
-      await this.redis.setBroadcastChannel(subscription.topic);
-    }
+    } 
   }
 
   private async pushSubscription(subscription: Subscription, message: string): Promise<void> {

@@ -14,7 +14,7 @@ export class RedisService {
   public client: any = redis.createClient(config.redis);
   public sub: any = redis.createClient(config.redis);
   public pub: any = redis.createClient(config.redis);
-  
+
   public context = "redis";
 
   constructor(public logger: Logger) {
@@ -99,8 +99,7 @@ export class RedisService {
           const message = safeJsonParse(data);
           messages.push(message);
         });
-        if (messages.length > 0) 
-          this.client.del(`legacy:${topic}`);
+        if (messages.length > 0) this.client.del(`legacy:${topic}`);
         this.logger.debug(`Getting Legacy Published`);
         this.logger.debug({ type: "method", method: "getLegacyCached", topic, messages });
         resolve(messages);
@@ -164,7 +163,7 @@ export class RedisService {
 
   public deletePendingRequest(id: number): Promise<void> {
     return new Promise((resolve, reject) => {
-      this.logger.debug(`Deleting Pending Request`);
+      this.logger.info(`Deleting Pending Request`);
       this.logger.debug({ type: "method", method: "deletePendingRequest", id });
       this.client.del(`pending:${id}`, err => {
         if (err) return reject(err);
@@ -174,39 +173,23 @@ export class RedisService {
   }
 
   public broadcast(topic: string, message: string) {
-    try {
-      this.pub.publish(topic, message);
-    } catch (e) {
-      this.logger.error(e)
-    }
+    this.pub.publish(topic, message);
   }
 
   public setBroadcastChannel(topic: string) {
-    try {
-      this.sub.subscribe(topic);
-    } catch (e) {
-      this.logger.error(e)
-    }
+    this.sub.subscribe(topic);
   }
 
   public deleteBroadcastChannel(topic: string) {
-    try {
-      this.sub.unsubscribe(topic);
-    } catch (e) {
-      this.logger.error(e)
-    }
+    this.sub.unsubscribe(topic);
   }
 
   public setBroadcastReceiver(receiver: any) {
-    try {
-      this.sub.on("message", receiver);
-    } catch (e) {
-      this.logger.error(e)
-    }
+    this.sub.on("message", receiver);
   }
 
   // ---------- Private ----------------------------------------------- //
-  
+
   private initialize(): void {
     this.logger.trace(`Initialized`);
   }

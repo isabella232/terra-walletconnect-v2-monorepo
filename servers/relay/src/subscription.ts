@@ -52,7 +52,7 @@ export class SubscriptionService {
   }
 
   public remove(id: string): void {
-    this.logger.debug(`Removing Subscription`);
+    this.logger.info(`Removing Subscription`);
     this.logger.debug({ type: "method", method: "remove", id });
     const deletings = this.subscriptions.filter(sub => sub.id === id);
     if (deletings) {
@@ -62,7 +62,7 @@ export class SubscriptionService {
   }
 
   public removeSocket(socketId: string): void {
-    this.logger.debug(`Removing Socket Subscriptions`);
+    this.logger.info(`Removing Socket Subscriptions`);
     this.logger.debug({ type: "method", method: "removeSocket", socketId });
     const deletings = this.subscriptions.filter(sub => sub.socketId !== socketId);
     if (deletings) {
