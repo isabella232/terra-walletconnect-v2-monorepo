@@ -174,19 +174,35 @@ export class RedisService {
   }
 
   public broadcast(topic: string, message: string) {
-    this.pub.publish(topic, message);
+    try {
+      this.pub.publish(topic, message);
+    } catch (e) {
+      this.logger.error(e)
+    }
   }
 
   public setBroadcastChannel(topic: string) {
-    this.sub.subscribe(topic);
+    try {
+      this.sub.subscribe(topic);
+    } catch (e) {
+      this.logger.error(e)
+    }
   }
 
   public deleteBroadcastChannel(topic: string) {
-    this.sub.unsubscribe(topic);
+    try {
+      this.sub.unsubscribe(topic);
+    } catch (e) {
+      this.logger.error(e)
+    }
   }
 
   public setBroadcastReceiver(receiver: any) {
-    this.sub.on("message", receiver);
+    try {
+      this.sub.on("message", receiver);
+    } catch (e) {
+      this.logger.error(e)
+    }
   }
 
   // ---------- Private ----------------------------------------------- //
